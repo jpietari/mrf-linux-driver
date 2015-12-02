@@ -1,0 +1,269 @@
+Driver modules for Micro-Research CompactPCI Event Generator and Event
+Receiver for linux kernel 2.6
+
+INSTALLATION
+
+The kernel headers for the target kernel have to be installed. To
+build kernel modules run make in the top level directory:
+
+$ make
+
+To install (as root)
+
+# make modules_install
+# depmod -a
+
+To load and unload the kernel drivers two script are provided. The
+module_load script loads the modules pci_mrfevg and pci_mrfevr for
+both the event generator (EVG) and event receiver (EVR).
+
+To load the drivers (as root)
+
+# sh module_load
+Found 2 Event Generators.
+Creating device nodes...
+Creating nodes /dev/ega[0-3] for major 253
+Creating nodes /dev/egb[0-3] for major 254
+Found 2 Event Receivers.
+Creating device nodes...
+Creating nodes /dev/era[0-3] for major 251
+Creating nodes /dev/erb[0-3] for major 252
+
+To unload the drivers (as root)
+
+# sh module_unload
+Unloading modules
+Removing device nodes
+
+The drivers dynamically allocate one major device number and four
+minor numbers for each board. The module_load script creates device
+nodes into the /dev directory and sets the permission for the
+devices. The group for the devices is set to 'mrf' and the script
+assumes this group does exist. The device nodes created follow the
+rules:
+
+/dev/ega[0-3] for first EVG
+/dev/egb[0-3] for second EVG
+/dev/egc[0-3] etc.
+
+/dev/era[0-3] for first EVR
+/dev/erb[0-3] for second EVR
+/dev/erc[0-3] etc.
+
+The minor numbers have following functions:
+minor 0: read/write access to PCI9030/PCI9056 EEPROM (only for cPCI-EVx-2x0,
+         PMC-EVR, cPCI-EVRTG-300)
+minor 1: read/write access to Flash configuration memory
+         on PXIe-EVx-300 flash can be memory mapped through this interface
+minor 2: read FPGA status/write FPGA configuration data (only for cPCI-EVx-2x0,
+         PMC-EVR, cPCI-EVRTG-300)
+minor 3: memory map EVG/EVR registers into user space
+
+The module_load script allow group write access to the minor device 3,
+all other devices have write access by root only.
+
+PCI9030 EEPROM ACCESS
+
+The serial EEPROM that holds the initialization data for the PCI9030
+bridge can be accessed through minor device 0. To dump the EEPROM
+contents issue command:
+
+$ dd if=/dev/ega0 of=eeprom.eep
+
+This generates an ascii readable file of the EEPROM contents. One can
+also dump the contents to the screen:
+
+$ cat /dev/ega0
+PCI9030 EEPROM Contents
+
+0x20dc Device ID
+0x1a3e Vendor ID
+0x0290 PCI Status
+0x0000 PCI Command
+0x1180 Class Code
+0x0001 Class Code / Revision
+0x20dc Subsystem ID
+0x1a3e Subsystem Vendor ID
+0x0000 MSB New Capability Pointer
+0x0040 LSB New Capability Pointer
+0x0000 (Maximum Latency and Minimum Grant are not loadable)
+0x0100 Interrupt Pin (Interrupt Line Routing is not loadable)
+0x4801 MSW of Power Management Capabilities
+0x4801 LSW of Power Management Next Capability Pointer
+0x0000 MSW of Power Management Data / PMCSR Brdge Support Extension
+0x0000 LSW of Power Management Control / Status
+0x0000 MSW of Hot Swap Control / Status
+0x4c06 LSW of Hot Swap Next Capability Pointer / Hot Swap Control
+0x0000 PCI Vital Product Data Address
+0x0003 PCI Vital Product Data Next Capability Pointer
+0x0fff MSW of Local Address Space 0 Range
+0x0000 LSW of Local Address Space 0 Range
+0x0000 MSW of Local Address Space 1 Range
+0x0000 LSW of Local Address Space 1 Range
+0x0000 MSW of Local Address Space 2 Range
+0x0000 LSW of Local Address Space 2 Range
+0x0000 MSW of Local Address Space 3 Range
+0x0000 LSW of Local Address Space 3 Range
+0x0000 MSW of Expansion ROM Range
+0x0000 LSW of Expansion ROM Range
+0x0000 MSW of Local Address Space 0 Local Base Address (Remap)
+0x0001 LSW of Local Address Space 0 Local Base Address (Remap)
+0x0000 MSW of Local Address Space 1 Local Base Address (Remap)
+0x0000 LSW of Local Address Space 1 Local Base Address (Remap)
+0x0000 MSW of Local Address Space 2 Local Base Address (Remap)
+0x0000 LSW of Local Address Space 2 Local Base Address (Remap)
+0x0000 MSW of Local Address Space 3 Local Base Address (Remap)
+0x0000 LSW of Local Address Space 3 Local Base Address (Remap)
+0x0010 MSW of Expansion ROM Local Base Address (Remap)
+0x0000 LSW of Expansion ROM Local Base Address (Remap)
+0x0180 MSW of Local Address Space 0 Bus Region Descriptor
+0x0002 LSW of Local Address Space 0 Bus Region Descriptor
+0x0080 MSW of Local Address Space 1 Bus Region Descriptor
+0x0000 LSW of Local Address Space 1 Bus Region Descriptor
+0x0080 MSW of Local Address Space 2 Bus Region Descriptor
+0x0000 LSW of Local Address Space 2 Bus Region Descriptor
+0x0080 MSW of Local Address Space 3 Bus Region Descriptor
+0x0000 LSW of Local Address Space 3 Bus Region Descriptor
+0x0080 MSW of Expansion ROM Bus Region Descriptor
+0x0000 LSW of Expansion ROM Bus Region Descriptor
+0x0000 MSW of Chip Select 0 Base Address
+0x1001 LSW of Chip Select 0 Base Address
+0x0000 MSW of Chip Select 1 Base Address
+0x0000 LSW of Chip Select 1 Base Address
+0x0000 MSW of Chip Select 2 Base Address
+0x0000 LSW of Chip Select 2 Base Address
+0x0000 MSW of Chip Select 3 Base Address
+0x0000 LSW of Chip Select 3 Base Address
+0x0030 Serial EEPROM Write-Protected Address Boundary
+0x0000 LSW of Interrupt Control/Status
+0x0078 MSW of PCI Target Response, Serial EEPROM, and Initialization Control
+0x1100 LSW of PCI Target Response, Serial EEPROM, and Initialization Control
+0x0024 MSW of General Purpose I/O Control
+0x9900 LSW of General Purpose I/O Control
+0x0000 MSW of Hidden 1 Power Management Data Select
+0x0000 LSW of Hidden 1 Power Management Data Select
+0x0000 MSW of Hidden 2 Power Management Data Select
+0x0000 LSW of Hidden 2 Power Management Data Select
+
+To program the EEPROM run (as root)
+
+# dd if=eeprom.eep of=/dev/ega0
+6+1 records in
+6+1 records out
+
+NOTE! Invalid data in the EEPROM can cause the board to become
+unaccessible and require factory service.
+
+XCF08P Platform Flash Access (cPCI-EVx-2x0, PMC-EVR-2x0)
+
+NOTE! Accessing the flash is very slow. Reading 1Mbyte of
+configuration data takes about 30 s on a NI PXI-8195, erasing and
+writing ~400 kbytes of configuration data takes over 3 min.
+ 
+The Platform Flash device holds the configuration data for the Virtex
+II Pro FPGA which is loaded when the board is powered up. The contents
+of the flash device can be read with the following command (this reads
+in first 1Mbyte of config data):
+
+$ dd if=/dev/ega1 of=flash.bit bs=1024 count=1024
+1024+0 records in
+1024+0 records out
+
+To erase the flash and write new configuration data issue the command
+(as root):
+
+# dd if=flash.bit of=/dev/ega1
+767+1 records in
+767+1 records out
+
+After the programming is finished the FPGA is configuration is loaded
+from the flash.
+
+Configuration Flash Access (cPCI-EVx-300 / PCIe-EVR-300)
+
+NOTE! Accessing the flash is slow.
+ 
+The Flash device holds the configuration data for the Lattice ECP3
+FPGA which is loaded when the board is powered up. There are two
+configuration images in the flash, a primary image and a golden
+image. During normal operation only the primary image is used and this
+is the image that gets updated during a firmware upgrade. If for some
+reason the primary image is corrupt, the golden image is loaded
+instead which will allow reprogramming of the primary image.
+
+The contents of the flash device can be read with the following
+command (this reads in first 1Mbyte of config data):
+
+$ dd if=/dev/ega1 of=flash.bit bs=1024 count=1024
+1024+0 records in
+1024+0 records out
+
+To erase the flash and write new configuration data issue the command
+(as root):
+
+# dd if=flash.bit of=/dev/ega1
+767+1 records in
+767+1 records out
+
+After the programming is finished a PCI reset is required to configure
+the FPGA with the new image.
+
+FPGA Configuration (cPCI-EVx-2x0, PMC-EVR-2x0, cPCI-EVRTG-300)
+
+The FPGA may be configured with direct access overriding the
+configuration data in the platform flash. To load the FPGA issue the
+command (as root):
+
+# dd if=fpga.bit of=/dev/ega2
+767+1 records in
+767+1 records out
+
+The FPGA status may be displayed following:
+
+$ cat /dev/ega2
+FPGA status
+DONE      1
+INIT      1
+MODE      000
+GHIGH_B   deasserted
+GWE       1
+DCI_MATCH 1
+DCM_LOCK  1
+CRC_ERROR 0
+
+Memory Mapping EVG/EVR registers into user space
+
+Access to the EVG/EVR registers is provided through the minor device 3
+which is given group read/write access by to module_load script.
+
+Below is an excerpt from the API sources for the EVG to show how the
+user space access to the EVG registers is gained:
+
+int EvgOpen(struct MrfEgRegs **pEg, char *device_name)
+{
+  int fd;
+
+  /* Open Event Generator device for read/write */
+  fd = open(device_name, O_RDWR);
+#ifdef DEBUG
+  DEBUG_PRINTF("EvgOpen: open(\"%s\", O_RDWR) returned %d\n", device_name, fd);
+#endif
+  if (fd != -1)
+    {
+      /* Memory map Event Generator registers */
+      *pEg = (struct MrfEgRegs *) mmap(0, EVG_MEM_WINDOW, PROT_READ | PROT_WRITE,
+                                        MAP_SHARED, fd, 0);
+#ifdef DEBUG
+  DEBUG_PRINTF("EvgOpen: mmap returned %08x, errno %d\n", (int) *pEg,
+               errno);
+#endif
+      if (*pEg == MAP_FAILED)
+        {
+          close(fd);
+          return -1;
+        }
+    }
+
+  return fd;
+}
+

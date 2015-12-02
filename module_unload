@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "Unloading modules"
+
+/sbin/rmmod pci_mrfevg
+/sbin/rmmod pci_mrfevr
+
+echo "Removing device nodes"
+rm -rf /dev/eg[a-h][0-3]
+rm -rf /dev/er[a-h][0-3]
