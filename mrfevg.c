@@ -102,6 +102,7 @@ static int pci_evg_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   dev_t chrdev = 0;
   struct mrf_dev *ev_device;
   struct pci_device_id *id = (struct pci_device_id *) dev_id;
+  volatile u32 *evg_fw_version;
 
   /* We keep device instance number in id->driver_data */
   id->driver_data = -1;
@@ -189,7 +190,7 @@ static int pci_evg_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
 		     (unsigned int) ev_device->BAR_mmapped[i]);
 	    }
 	  else
-	    printk(KERN_ALERT DEVICE_NAME ": Unable to to obtain I/O memory address 0x%08llX\n",
+	    printk(KERN_ALERT DEVICE_NAME ": Unable to to obtain I/O memory address 0x%08lx\n",
 		   ev_device->BAR_start[i]);
 	}
       else
@@ -200,7 +201,7 @@ static int pci_evg_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   pci_read_config_word(pcidev, PCI_SUBSYSTEM_ID, &ev_device->subsys_id);
 
   /* Set subsystem device ID to PXI-EVG-230 for unconfigured board. */
-  if (ev_device->subsys_id == NULL)
+  if (ev_device->subsys_id == 0)
     ev_device->subsys_id = PCI_DEVICE_ID_MRF_PXIEVG230;
 
   switch (ev_device->subsys_id)
@@ -230,6 +231,10 @@ static int pci_evg_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   
   /* Check the interrupt line */
   ev_device->irq = pcidev->irq;
+
+  /* Check firmware version */
+  evg_fw_version = ((ev_device->pEv) + EV_FW_VERSION_OFFSET);
+  ev_device->fw_version = be32_to_cpu(*evg_fw_version);
 
   return 0;
 }

@@ -70,6 +70,8 @@
 
 #define EV_IRQ_FLAG_OFFSET          (0x0008)
 #define EV_IRQ_ENABLE_OFFSET        (0x000C)
+#define EV_MIRQ_ENABLE_OFFSET       (0x001C)
+#define EV_FW_VERSION_OFFSET        (0x002C)
 #define EV_IRQ_PCI_DRIVER_ENA       (0x40000000)
 
 #define EV_SPI_DATA_OFFSET          (0x00A0)
@@ -132,6 +134,7 @@ struct mrf_dev {
   int              fpgairlen;
   int              xcfirlen;
   int              irq;            /* Interrupt line */
+  unsigned long    fw_version;
   struct fasync_struct *async_queue;
 };
 

@@ -129,6 +129,7 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   dev_t chrdev = 0;
   struct mrf_dev *ev_device;
   struct pci_device_id *id = (struct pci_device_id *) dev_id;
+  volatile u32 *evr_fw_version;
 
   /* We keep device instance number in id->driver_data */
   id->driver_data = -1;
@@ -279,6 +280,10 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   
   /* Check the interrupt line */
   ev_device->irq = pcidev->irq;
+
+  /* Check firmware version */
+  evr_fw_version = ((ev_device->pEv) + EV_FW_VERSION_OFFSET);
+  ev_device->fw_version = be32_to_cpu(*evr_fw_version);
 
   return 0;
 }
