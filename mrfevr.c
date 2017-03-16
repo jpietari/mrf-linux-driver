@@ -17,6 +17,7 @@
 #include <linux/errno.h>
 #include <linux/types.h>
 #include <linux/cdev.h>
+#include <linux/device.h>
 #include <linux/pci.h>
 #include <linux/seq_file.h>
 #include <linux/ioport.h>
@@ -126,6 +127,8 @@ static struct pci_device_id evr_ids[] = {
     .subdevice = PCI_DEVICE_ID_MRF_PCIEEVR300},
   { 0, }};
 MODULE_DEVICE_TABLE(pci, evr_ids);
+
+static struct class *mrf_evr_class = NULL;
 
 static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev_id)
 {
@@ -298,6 +301,21 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
   evr_fw_version = ((ev_device->pEv) + EV_FW_VERSION_OFFSET);
   ev_device->fw_version = be32_to_cpu(*evr_fw_version);
 
+  /* Register the devices so that device nodes are created. */
+  for (i = 0; i < DEVICE_MINOR_NUMBERS; ++i)
+    {
+      dev_t devno = MKDEV(ev_device->major, i);
+      char devletter = 'a' + (char) id->driver_data;
+      struct device *device = NULL;
+      device = device_create(mrf_evr_class, &pcidev->dev, devno, NULL, "er%c%d",
+			     devletter, i);
+      if (IS_ERR(device))
+        {
+          printk(KERN_WARNING DEVICE_NAME
+		 ": could not register device er%c%d.\n", devletter, i);
+        }
+    }
+
   return 0;
 }
 
@@ -319,6 +337,13 @@ static void pci_evr_remove(struct pci_dev *pcidev)
     }
   else
     {
+      /* Unregister the devices so that device nodes are removed. */
+      for (i = 0; i < DEVICE_MINOR_NUMBERS; ++i)
+        {
+          dev_t devno = MKDEV(ev_device->major, i);
+          device_destroy(mrf_evr_class, devno);
+        }
+
       /* Unmap BARs */
       for (i = 0; i < MAX_MRF_BARS; i++)
 	{
@@ -372,6 +397,9 @@ static int __init pci_evr_init(void)
   memset(mrf_devices, 0, sizeof(struct mrf_dev)*MAX_MRF_DEVICES);
 
   printk(KERN_ALERT "Event Receiver PCI/PCIe driver init.\n");
+  mrf_evr_class = class_create(THIS_MODULE, DEVICE_NAME);
+  if (IS_ERR(mrf_evr_class))
+    printk(KERN_WARNING DEVICE_NAME ": cannot register device class.\n");
   return pci_register_driver(&evr_driver);    
 }
 
@@ -379,6 +407,11 @@ static void __exit pci_evr_exit(void)
 {
   printk(KERN_ALERT "Event Receiver PCI/PCIe driver exiting.\n");
   pci_unregister_driver(&evr_driver);
+  if (mrf_evr_class)
+    {
+      class_destroy(mrf_evr_class);
+      mrf_evr_class = NULL;
+    }
 }  
 
 module_init(pci_evr_init);

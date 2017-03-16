@@ -1,0 +1,2 @@
+SUBSYSTEM=="mrfev[gr]", KERNEL=="e[gr][a-z][02]", GROUP="mrf", MODE="0640"
+SUBSYSTEM=="mrfev[gr]", KERNEL=="e[gr][a-z][13]", GROUP="mrf", MODE="0660"

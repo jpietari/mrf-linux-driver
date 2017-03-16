@@ -6,48 +6,54 @@
 
 #make modules_install
 #/sbin/depmod -a
+
+udev_rules_file="`dirname "$0"`/60-mrf-pci.rules"
+if [ -f "$udev_rules_file" -a ! -e "/etc/udev/rules.d/60-mrf-pci.rules" ]; then
+  cp "$udev_rules_file" "/etc/udev/rules.d/60-mrf-pci.rules"
+fi 
+
 /sbin/modprobe pci_mrfevg || exit 1
 /sbin/modprobe pci_mrfevr || exit 1
 
 majors=$(awk "\$2==\"mrfevg\" {print \$1}" /proc/devices)
 
 echo "Found" $(echo $majors | wc -w) "Event Generators."
-echo "Creating device nodes..."
-
-device=1
-for major in $majors; do
-    dev=$(echo $device | awk '{ printf "%c", 96+ $1}')
-    device=$((++device))
-    rm -f /dev/eg$dev[0-3]
-    echo -n "Creating nodes /dev/eg"$dev"[0-3] for major" $major
-    mknod '/dev/eg'$dev'0' c $major 0
-    mknod '/dev/eg'$dev'1' c $major 1
-    mknod '/dev/eg'$dev'2' c $major 2
-    mknod '/dev/eg'$dev'3' c $major 3
-    chgrp mrf '/dev/eg'$dev[0-3]
-    chmod g+w '/dev/eg'$dev'1'
-    chmod g+w '/dev/eg'$dev'3'
-done
+#echo "Creating device nodes..."
+#
+#device=1
+#for major in $majors; do
+#    dev=$(echo $device | awk '{ printf "%c", 96+ $1}')
+#    device=$((++device))
+#    rm -f /dev/eg$dev[0-3]
+#    echo -n "Creating nodes /dev/eg"$dev"[0-3] for major" $major
+#    mknod '/dev/eg'$dev'0' c $major 0
+#    mknod '/dev/eg'$dev'1' c $major 1
+#    mknod '/dev/eg'$dev'2' c $major 2
+#    mknod '/dev/eg'$dev'3' c $major 3
+#    chgrp mrf '/dev/eg'$dev[0-3]
+#    chmod g+w '/dev/eg'$dev'1'
+#    chmod g+w '/dev/eg'$dev'3'
+#done
 
 majors=$(awk "\$2==\"mrfevr\" {print \$1}" /proc/devices)
 
 echo "Found" $(echo $majors | wc -w) "Event Receivers."
-echo "Creating device nodes..."
+#echo "Creating device nodes..."
 
-device=1
-for major in $majors; do
-    dev=$(echo $device | awk '{ printf "%c", 96+ $1}')
-    device=$((++device))
-    rm -f /dev/er$dev[0-3]
-    echo -n "Creating nodes /dev/er"$dev"[0-3] for major" $major
-    mknod '/dev/er'$dev'0' c $major 0
-    mknod '/dev/er'$dev'1' c $major 1
-    mknod '/dev/er'$dev'2' c $major 2
-    mknod '/dev/er'$dev'3' c $major 3
-    chgrp mrf '/dev/er'$dev[0-3]
-    chmod g+w '/dev/er'$dev'1'
-    chmod g+w '/dev/er'$dev'3'
-done
+#device=1
+#for major in $majors; do
+#    dev=$(echo $device | awk '{ printf "%c", 96+ $1}')
+#    device=$((++device))
+#    rm -f /dev/er$dev[0-3]
+#    echo -n "Creating nodes /dev/er"$dev"[0-3] for major" $major
+#    mknod '/dev/er'$dev'0' c $major 0
+#    mknod '/dev/er'$dev'1' c $major 1
+#    mknod '/dev/er'$dev'2' c $major 2
+#    mknod '/dev/er'$dev'3' c $major 3
+#    chgrp mrf '/dev/er'$dev[0-3]
+#    chmod g+w '/dev/er'$dev'1'
+#    chmod g+w '/dev/er'$dev'3'
+#done
 
 
 # dd if=/home/jpietari/mrf/event/fw/Evr/opb_pci9030/pxievr230.eep of=/dev/era0
