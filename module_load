@@ -3,7 +3,6 @@
 # sh /home/jpietari/mrf/event/sw/linux-multi/module_load
 # sh /home/jpietari/mrf/event/sw/linux-multi/module_unload
 # cd /home/jpietari/mrf/event/sw/linux-multi
-export FWVERSION=/home/jpietari/mrf/event/sw/pci_mrfapi/fwversion
 
 #make modules_install
 #/sbin/depmod -a
@@ -28,7 +27,6 @@ for major in $majors; do
     chgrp mrf '/dev/eg'$dev[0-3]
     chmod g+w '/dev/eg'$dev'1'
     chmod g+w '/dev/eg'$dev'3'
-    $FWVERSION '/dev/eg'$dev'3'
 done
 
 majors=$(awk "\$2==\"mrfevr\" {print \$1}" /proc/devices)
@@ -49,7 +47,6 @@ for major in $majors; do
     chgrp mrf '/dev/er'$dev[0-3]
     chmod g+w '/dev/er'$dev'1'
     chmod g+w '/dev/er'$dev'3'
-    $FWVERSION '/dev/er'$dev'3'
 done
 
 

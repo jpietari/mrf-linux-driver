@@ -118,6 +118,7 @@ struct mrf_dev {
   char             *fpga_conf_data;
   int              fpga_conf_size;
   int              major;          /* Hold major number of device */
+  u16              device_id;      /* Hold device ID of device */
   u16              subsys_id;      /* Hold subsystem ID of device */
   u32              devtype;        /* Hold device type id bits */
   struct cdev      cdev;

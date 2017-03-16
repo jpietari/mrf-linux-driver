@@ -120,6 +120,10 @@ static struct pci_device_id evr_ids[] = {
     .device = PCI_DEVICE_ID_KINTEX7,
     .subvendor = PCI_VENDOR_ID_MRF,
     .subdevice = PCI_DEVICE_ID_MRF_MTCAEVR300},
+  { .vendor = PCI_VENDOR_ID_XILINX,
+    .device = PCI_DEVICE_ID_KINTEX7,
+    .subvendor = PCI_VENDOR_ID_MRF,
+    .subdevice = PCI_DEVICE_ID_MRF_PCIEEVR300},
   { 0, }};
 MODULE_DEVICE_TABLE(pci, evr_ids);
 
@@ -228,7 +232,8 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
 	ev_device->BAR_mmapped[i] = NULL;
     }
 
-  /* Read subsystem device ID to identify board */
+  /* Read device ID and subsystem device ID to identify board */
+  pci_read_config_word(pcidev, PCI_DEVICE_ID, &ev_device->device_id);
   pci_read_config_word(pcidev, PCI_SUBSYSTEM_ID, &ev_device->subsys_id);
 
   switch (ev_device->subsys_id)
@@ -249,8 +254,16 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
       break;
 
     case PCI_DEVICE_ID_MRF_PCIEEVR300: 
-      ev_device->devtype = MRF_DEVTYPE_ECP3_PCIE;
-      ev_device->pEv = ev_device->BAR_mmapped[0];
+      if (ev_device->device_id == PCI_DEVICE_ID_LATTICE_ECP3)
+	{
+	  ev_device->devtype = MRF_DEVTYPE_ECP3_PCIE;
+	  ev_device->pEv = ev_device->BAR_mmapped[0];
+	}
+      else
+	{
+	  ev_device->devtype = MRF_DEVTYPE_K7_PCIE;
+	  ev_device->pEv = ev_device->BAR_mmapped[0];
+	}
       break;
 
     case PCI_DEVICE_ID_MRF_CPCIEVRTG:
