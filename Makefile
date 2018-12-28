@@ -18,7 +18,8 @@ PKG_FILES = $(PKG_DIR)/COPYING $(PKG_DIR)/Makefile $(PKG_DIR)/module_load \
         $(PKG_DIR)/mrfevg.c $(PKG_DIR)/flash.c \
         $(PKG_DIR)/mrfevr.c $(PKG_DIR)/pci_mrfev.h $(PKG_DIR)/README \
         $(PKG_DIR)/eeprom_9056.c $(PKG_DIR)/eeprom.c \
-        $(PKG_DIR)/jtag_9056.c $(PKG_DIR)/jtag.c
+        $(PKG_DIR)/jtag_9056.c $(PKG_DIR)/jtag.c \
+        $(PKG_DIR)/60-mrf-pci.rules
 PKG_DATE = $(shell date +"%y%m%d")
 PKG_NAME = mrf_pci_driver.$(PKG_DATE).tar.gz
 

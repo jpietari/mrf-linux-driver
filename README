@@ -1,5 +1,5 @@
-Driver modules for Micro-Research CompactPCI Event Generator and Event
-Receiver for linux kernel 2.6
+Linux driver modules for Micro-Research CompactPCI Event Generator and
+Event Receiver
 
 INSTALLATION
 
@@ -21,13 +21,7 @@ To load the drivers (as root)
 
 # sh module_load
 Found 2 Event Generators.
-Creating device nodes...
-Creating nodes /dev/ega[0-3] for major 253
-Creating nodes /dev/egb[0-3] for major 254
 Found 2 Event Receivers.
-Creating device nodes...
-Creating nodes /dev/era[0-3] for major 251
-Creating nodes /dev/erb[0-3] for major 252
 
 To unload the drivers (as root)
 
@@ -36,11 +30,10 @@ Unloading modules
 Removing device nodes
 
 The drivers dynamically allocate one major device number and four
-minor numbers for each board. The module_load script creates device
-nodes into the /dev directory and sets the permission for the
-devices. The group for the devices is set to 'mrf' and the script
-assumes this group does exist. The device nodes created follow the
-rules:
+minor numbers for each board. The driver automatically creates device
+nodes into the /dev directory and sets the permission for the devices
+based on the rules file 60-mrf-pci.rules which is copied to the
+/etc/udev/rules.d directory by the module_load script.
 
 /dev/ega[0-3] for first EVG
 /dev/egb[0-3] for second EVG
@@ -58,9 +51,6 @@ minor 1: read/write access to Flash configuration memory
 minor 2: read FPGA status/write FPGA configuration data (only for cPCI-EVx-2x0,
          PMC-EVR, cPCI-EVRTG-300)
 minor 3: memory map EVG/EVR registers into user space
-
-The module_load script allow group write access to the minor device 3,
-all other devices have write access by root only.
 
 PCI9030 EEPROM ACCESS
 
@@ -179,17 +169,19 @@ To erase the flash and write new configuration data issue the command
 After the programming is finished the FPGA is configuration is loaded
 from the flash.
 
-Configuration Flash Access (cPCI-EVx-300 / PCIe-EVR-300)
+Configuration Flash Access (cPCI-EVx-300 / PCIe-EVR-300 /
+PCIe-EVR-300DC / mTCA-EVR-300)
 
 NOTE! Accessing the flash is slow.
  
-The Flash device holds the configuration data for the Lattice ECP3
-FPGA which is loaded when the board is powered up. There are two
-configuration images in the flash, a primary image and a golden
-image. During normal operation only the primary image is used and this
-is the image that gets updated during a firmware upgrade. If for some
-reason the primary image is corrupt, the golden image is loaded
-instead which will allow reprogramming of the primary image.
+The Flash device holds the configuration data for the FPGA which is
+loaded when the board is powered up. On the cPCI-EVx-300 and
+PCIe-EVR-300 there are two configuration images in the flash, a
+primary image and a golden image. During normal operation only the
+primary image is used and this is the image that gets updated during a
+firmware upgrade. If for some reason the primary image is corrupt, the
+golden image is loaded instead which will allow reprogramming of the
+primary image.
 
 The contents of the flash device can be read with the following
 command (this reads in first 1Mbyte of config data):
@@ -205,8 +197,8 @@ To erase the flash and write new configuration data issue the command
 767+1 records in
 767+1 records out
 
-After the programming is finished a PCI reset is required to configure
-the FPGA with the new image.
+After the programming is finished a system reset is required to
+configure the FPGA with the new image.
 
 FPGA Configuration (cPCI-EVx-2x0, PMC-EVR-2x0, cPCI-EVRTG-300)
 
