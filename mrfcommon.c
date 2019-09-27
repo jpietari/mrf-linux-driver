@@ -27,6 +27,7 @@
 #include <linux/interrupt.h>
 #include <linux/version.h>
 #include <linux/sched.h>
+#include <linux/uaccess.h>
 
 #include <asm/page.h>
 #include <asm/uaccess.h>
