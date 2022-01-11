@@ -180,7 +180,7 @@ static int pci_evg_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
 				 - ev_device->BAR_start[i] + 1,
 				 DEVICE_NAME) != NULL)
 	    {
-	      ev_device->BAR_mmapped[i] = ioremap_nocache(ev_device->BAR_start[i],
+	      ev_device->BAR_mmapped[i] = ioremap(ev_device->BAR_start[i],
 							  ev_device->BAR_end[i] -
 							  ev_device->BAR_start[i] + 1);
 	      printk(KERN_WARNING DEVICE_NAME ":BAR%d start %08x end %08x mmaped %08x\n", i,
