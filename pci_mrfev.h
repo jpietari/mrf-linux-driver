@@ -147,13 +147,8 @@ ssize_t ev_read(struct file *filp, char __user *buf, size_t count,
 		loff_t *f_pos);
 ssize_t ev_write(struct file *filp, const char __user *buf, size_t count,
 		 loff_t *f_pos);
-#ifdef HAVE_UNLOCKED_IOCTL
 long ev_unlocked_ioctl(struct file *filp,
 		       unsigned int cmd, unsigned long arg);
-#else
-int ev_ioctl(struct inode *inode, struct file *filp,
-	     unsigned int cmd, unsigned long arg);
-#endif
 int ev_fasync(int fd, struct file *filp, int mode);
 int ev_remap_mmap(struct file *filp, struct vm_area_struct *vma);
 #if LINUX_VERSION_CODE > (0x020619)

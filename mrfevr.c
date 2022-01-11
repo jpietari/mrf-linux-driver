@@ -47,11 +47,7 @@ static struct file_operations evr_fops = {
   .owner = THIS_MODULE,
   .read = ev_read,
   .write = ev_write,
-#ifdef HAVE_UNLOCKED_IOCTL
   .unlocked_ioctl = ev_unlocked_ioctl,
-#else
-  .ioctl = ev_ioctl,
-#endif
   .open = ev_open,
   .release = ev_release,
   .fasync = ev_fasync,
