@@ -41,6 +41,12 @@ MODULE_LICENSE("GPL");
 
 #define LATTICE_IRQ 1
 
+#if KERNEL_VERSION(5, 0, 0) <= LINUX_VERSION_CODE
+#define mrf_access_ok(type, addr, size) access_ok(addr, size)
+#else
+#define mrf_access_ok(type, addr, size) access_ok(type, addr, size)
+#endif // KERNEL_VERSION(5, 0, 0)
+
 struct mrf_dev mrf_devices[MAX_MRF_DEVICES];
 
 int ev_assign_irq(struct mrf_dev *ev_device);
@@ -915,9 +921,9 @@ int ev_ioctl(struct inode *inode, struct file *filp,
 
   /* Check access */
   if (_IOC_DIR(cmd) & _IOC_READ)
-    ret = !access_ok(VERIFY_WRITE, (void __user *)arg, _IOC_SIZE(cmd));
+    ret = !mrf_access_ok(VERIFY_WRITE, (void __user *)arg, _IOC_SIZE(cmd));
   else if (_IOC_DIR(cmd) & _IOC_WRITE)
-    ret = !access_ok(VERIFY_READ, (void __user *)arg, _IOC_SIZE(cmd));
+    ret = !mrf_access_ok(VERIFY_READ, (void __user *)arg, _IOC_SIZE(cmd));
   if (ret)
     return -EFAULT;
 

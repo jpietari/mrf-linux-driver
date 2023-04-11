@@ -49,6 +49,23 @@
 #define DEVICE_EV     3
 #define DEVICE_LAST   3
 
+/*
+  Starting with kernel 5.6, ioremap_nocache is not defined by the kernel headers
+  any longer. Before, it was defined as an alias for ioremap, which changed its
+  caching behavior a long time ago.
+*/
+#if KERNEL_VERSION(5, 6, 0) <= LINUX_VERSION_CODE
+#define ioremap_nocache ioremap
+#endif
+
+/*
+  Starting with kernel 5.9, HAVE_UNLOCKED_IOCTL is not defined by the kernel
+  headers any longer.
+*/
+#if KERNEL_VERSION(5, 9, 0) <= LINUX_VERSION_CODE
+#define HAVE_UNLOCKED_IOCTL 1
+#endif
+
 /* Define the maximum number of words in EEPROM */
 #define EEPROM_MAX_WORDS            256
 
