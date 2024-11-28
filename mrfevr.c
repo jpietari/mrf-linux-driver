@@ -125,6 +125,10 @@ static struct pci_device_id evr_ids[] = {
     .device = PCI_DEVICE_ID_KINTEX7,
     .subvendor = PCI_VENDOR_ID_MRF,
     .subdevice = PCI_DEVICE_ID_MRF_PCIEEVR300},
+  { .vendor = PCI_VENDOR_ID_XILINX,
+    .device = PCI_DEVICE_ID_KINTEX7,
+    .subvendor = PCI_VENDOR_ID_MRF,
+    .subdevice = PCI_DEVICE_ID_MRF_PXIEEVR300},
   { 0, }};
 MODULE_DEVICE_TABLE(pci, evr_ids);
 
@@ -277,10 +281,17 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
       ev_device->pEv = ev_device->BAR_mmapped[2];
       break;
 
-    case PCI_DEVICE_ID_ZOMOJO_Z1:
     case PCI_DEVICE_ID_MRF_PXIEEVR300:
-      ev_device->devtype = MRF_DEVTYPE_V5_PCIE;
-      ev_device->pEv = ev_device->BAR_mmapped[0];
+      if (ev_device->device_id == PCI_DEVICE_ID_ZOMOJO_Z1)
+	{
+	  ev_device->devtype = MRF_DEVTYPE_V5_PCIE;
+	  ev_device->pEv = ev_device->BAR_mmapped[0];
+	}
+      else
+	{
+	  ev_device->devtype = MRF_DEVTYPE_K7_PCIE;
+	  ev_device->pEv = ev_device->BAR_mmapped[0];
+	}
       break;
 
     case PCI_DEVICE_ID_KINTEX7:
