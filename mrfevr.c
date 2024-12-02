@@ -47,11 +47,7 @@ static struct file_operations evr_fops = {
   .owner = THIS_MODULE,
   .read = ev_read,
   .write = ev_write,
-#ifdef HAVE_UNLOCKED_IOCTL
   .unlocked_ioctl = ev_unlocked_ioctl,
-#else
-  .ioctl = ev_ioctl,
-#endif
   .open = ev_open,
   .release = ev_release,
   .fasync = ev_fasync,
@@ -218,7 +214,7 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
 	  if (request_mem_region(ev_device->BAR_start[i], ev_device->BAR_end[i]
 				 - ev_device->BAR_start[i] + 1,
 				 DEVICE_NAME) != NULL)
-	    ev_device->BAR_mmapped[i] = ioremap_nocache(ev_device->BAR_start[i],
+	    ev_device->BAR_mmapped[i] = ioremap(ev_device->BAR_start[i],
 							ev_device->BAR_end[i] -
 							ev_device->BAR_start[i] + 1);
 	  printk(KERN_WARNING DEVICE_NAME ":BAR%d start %08x end %08x, mmap %08x\n", i,
