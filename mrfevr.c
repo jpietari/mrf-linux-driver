@@ -282,7 +282,8 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
       break;
 
     case PCI_DEVICE_ID_MRF_PXIEEVR300:
-      if (ev_device->device_id == PCI_DEVICE_ID_ZOMOJO_Z1)
+      if (ev_device->device_id == PCI_DEVICE_ID_ZOMOJO_Z1 ||
+	  ev_device->device_id == PCI_DEVICE_ID_0505)
 	{
 	  ev_device->devtype = MRF_DEVTYPE_V5_PCIE;
 	  ev_device->pEv = ev_device->BAR_mmapped[0];
