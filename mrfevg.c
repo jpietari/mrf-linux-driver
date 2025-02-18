@@ -339,7 +339,7 @@ static int __init pci_evg_init(void)
   memset(mrf_devices, 0, sizeof(struct mrf_dev)*MAX_MRF_DEVICES);
 
   printk(KERN_ALERT "Event Generator PCI/PCIe driver init.\n");
-  mrf_evg_class = class_create(THIS_MODULE, DEVICE_NAME);
+  mrf_evg_class = mrf_class_create(THIS_MODULE, DEVICE_NAME);
   if (IS_ERR(mrf_evg_class))
     printk(KERN_WARNING DEVICE_NAME ": cannot register device class.\n");
   return pci_register_driver(&evg_driver);    
