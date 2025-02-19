@@ -405,7 +405,7 @@ static int __init pci_evr_init(void)
   memset(mrf_devices, 0, sizeof(struct mrf_dev)*MAX_MRF_DEVICES);
 
   printk(KERN_ALERT "Event Receiver PCI/PCIe driver init.\n");
-  mrf_evr_class = class_create(THIS_MODULE, DEVICE_NAME);
+  mrf_evr_class = mrf_class_create(THIS_MODULE, DEVICE_NAME);
   if (IS_ERR(mrf_evr_class))
     printk(KERN_WARNING DEVICE_NAME ": cannot register device class.\n");
   return pci_register_driver(&evr_driver);    
