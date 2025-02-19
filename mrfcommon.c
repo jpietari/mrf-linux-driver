@@ -896,13 +896,8 @@ ssize_t ev_write(struct file *filp, const char __user *buf, size_t count,
   return retval;
 }
 
-#ifdef HAVE_UNLOCKED_IOCTL
 long ev_unlocked_ioctl(struct file *filp,
 	     unsigned int cmd, unsigned long arg)
-#else
-int ev_ioctl(struct inode *inode, struct file *filp,
-	     unsigned int cmd, unsigned long arg)
-#endif
 {
   struct mrf_dev *ev_device = (struct mrf_dev *) filp->private_data;
   int ret = 0;
@@ -915,9 +910,9 @@ int ev_ioctl(struct inode *inode, struct file *filp,
 
   /* Check access */
   if (_IOC_DIR(cmd) & _IOC_READ)
-    ret = !access_ok(VERIFY_WRITE, (void __user *)arg, _IOC_SIZE(cmd));
+    ret = !access_ok((void __user *)arg, _IOC_SIZE(cmd));
   else if (_IOC_DIR(cmd) & _IOC_WRITE)
-    ret = !access_ok(VERIFY_READ, (void __user *)arg, _IOC_SIZE(cmd));
+    ret = !access_ok((void __user *)arg, _IOC_SIZE(cmd));
   if (ret)
     return -EFAULT;
 
