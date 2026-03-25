@@ -1100,16 +1100,16 @@ int ev_irq_enable(struct mrf_dev *ev_device)
        && ((ev_device->fw_version & 0x0FEFF) >= 0x0008)))
     {
       *evr_mirq_enable |= __constant_cpu_to_be32(EV_IRQ_PCI_DRIVER_ENA);
-      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %08x, %08x enable\n",
+      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %p, %08x enable\n",
 	     (int) ev_device->fw_version,
-	     (int) evr_mirq_enable, (int) be32_to_cpu(*evr_mirq_enable));
+	     evr_mirq_enable, (int) be32_to_cpu(*evr_mirq_enable));
     }
   else
     {
       *evr_irq_enable |= __constant_cpu_to_be32(EV_IRQ_PCI_DRIVER_ENA);
-      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %08x, %08x enable\n",
+      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %p, %08x enable\n",
 	     (int) ev_device->fw_version,
-	     (int) evr_irq_enable, (int) be32_to_cpu(*evr_irq_enable));
+	     evr_irq_enable, (int) be32_to_cpu(*evr_irq_enable));
     }
 
   barrier();
@@ -1128,16 +1128,16 @@ int ev_irq_disable(struct mrf_dev *ev_device)
        && ((ev_device->fw_version & 0x0FEFF) >= 0x0008)))
     {
       *evr_mirq_enable &= __constant_cpu_to_be32(~EV_IRQ_PCI_DRIVER_ENA);
-      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %08x, %08x disable\n",
+      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %p, %08x disable\n",
 	     (int) ev_device->fw_version,
-	     (int) evr_mirq_enable, (int) be32_to_cpu(*evr_mirq_enable));
+	     evr_mirq_enable, (int) be32_to_cpu(*evr_mirq_enable));
     }
   else
     {
       *evr_irq_enable &= __constant_cpu_to_be32(~EV_IRQ_PCI_DRIVER_ENA);
-      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %08x, %08x disable\n",
+      printk(KERN_WARNING DEVICE_NAME ": EVR %08x irq addr %p, %08x disable\n",
 	     (int) ev_device->fw_version,
-	     (int) evr_irq_enable, (int) be32_to_cpu(*evr_irq_enable));
+	     evr_irq_enable, (int) be32_to_cpu(*evr_irq_enable));
     }
 
   barrier();

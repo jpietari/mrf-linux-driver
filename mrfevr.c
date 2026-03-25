@@ -217,10 +217,10 @@ static int pci_evr_probe(struct pci_dev *pcidev, const struct pci_device_id *dev
 	    ev_device->BAR_mmapped[i] = ioremap(ev_device->BAR_start[i],
 							ev_device->BAR_end[i] -
 							ev_device->BAR_start[i] + 1);
-	  printk(KERN_WARNING DEVICE_NAME ":BAR%d start %08x end %08x, mmap %08x\n", i,
-		 (unsigned int) ev_device->BAR_start[i],
-		 (unsigned int) ev_device->BAR_end[i],
-		 (unsigned int) ev_device->BAR_mmapped[i]);
+	  printk(KERN_WARNING DEVICE_NAME ":BAR%d start %08lx end %08lx, mmap %p\n", i,
+		 ev_device->BAR_start[i],
+		 ev_device->BAR_end[i],
+		 ev_device->BAR_mmapped[i]);
 	  
 #ifdef DEBUG_BARS
 	  {

@@ -357,8 +357,8 @@ int eeprom_9056_sscan(struct Pci9056LocalConf *pLC, char *buf)
     }
 
 #ifdef DEBUG
-  printk(KERN_INFO "eeprom_9056_sccan read %d words pLC = %08x.\n", datalen,
-	 (unsigned int) pLC);
+  printk(KERN_INFO "eeprom_9056_sccan read %d words pLC = %p.\n", datalen,
+	 pLC);
 #endif
 
   if (datalen)
