@@ -947,10 +947,12 @@ long ev_unlocked_ioctl(struct file *filp,
   Virtual Memory Area operations
 */
 
+static
 void ev_vma_open(struct vm_area_struct *vma)
 {
 }
 
+static
 void ev_vma_close(struct vm_area_struct *vma)
 {
 }

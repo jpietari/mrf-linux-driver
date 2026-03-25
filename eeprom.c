@@ -28,6 +28,7 @@
 
 /* Descriptions for PCI9030 EEPROM fields */
 
+static
 char *EepromComment9030[] = {
   "Device ID",
   "Vendor ID",
@@ -108,6 +109,7 @@ char *EepromComment9030[] = {
 #define MRF_EVX_EEPROM_SN_BEGIN 68
 #define MRF_EVX_EEPROM_SN_END   74
 
+static
 void eeprom_9030_cmd_start(volatile struct Pci9030LocalConf *pLC)
 {
   /* CS high, SK low, DI low */
@@ -115,6 +117,7 @@ void eeprom_9030_cmd_start(volatile struct Pci9030LocalConf *pLC)
 				      | PLX9030_CNTRL_EECS);
 }
 
+static
 void eeprom_9030_cmd_stop(volatile struct Pci9030LocalConf *pLC)
 {
   /* CS low, SK low, DI low */
@@ -124,6 +127,7 @@ void eeprom_9030_cmd_stop(volatile struct Pci9030LocalConf *pLC)
 /* This function is not writting the optimal way - the typical EEPROM
    programming cycle takes 3 ms according to datasheet. This function
    will take 10 - 20 ms depeding on the kernel timer setup */
+static
 int eeprom_9030_wait(volatile struct Pci9030LocalConf *pLC)
 {
   int timeout_jiffies;
@@ -146,6 +150,7 @@ int eeprom_9030_wait(volatile struct Pci9030LocalConf *pLC)
   return 0;
 }
 
+static
 int eeprom_9030_write_bits(volatile struct Pci9030LocalConf *pLC,
 		       int command, int cmdlen)
 {
@@ -189,6 +194,7 @@ int eeprom_9030_write_bits(volatile struct Pci9030LocalConf *pLC,
   return 0;
 }
 
+static
 int eeprom_9030_read_bits(volatile struct Pci9030LocalConf *pLC,
 		      int *data, int readlen)
 {
@@ -222,6 +228,7 @@ int eeprom_9030_read_bits(volatile struct Pci9030LocalConf *pLC,
   return 0;
 }
 
+static
 int eeprom_9030_read(struct Pci9030LocalConf *pLC,
 		unsigned short *eepromdata, unsigned int wordcount)
 {
@@ -290,6 +297,7 @@ int eeprom_9030_sprint(struct Pci9030LocalConf *pLC, char *buf, int size)
     return -ENOSPC;
 }
 
+static
 int eeprom_9030_write(struct Pci9030LocalConf *pLC,
 		 unsigned short *eepromdata, unsigned int wordcount)
 {

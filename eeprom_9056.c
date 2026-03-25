@@ -27,6 +27,7 @@
 
 /* Descriptions for PCI9056 EEPROM fields */
 
+static
 char *EepromComment9056[] = {
   "Device ID",
   "Vendor ID",
@@ -89,6 +90,7 @@ char *EepromComment9056[] = {
 #define MRF_FCT_EEPROM_SN_BEGIN 50
 #define MRF_FCT_EEPROM_SN_END   56
 
+static
 void eeprom_9056_cmd_start(volatile struct Pci9056LocalConf *pLC)
 {
   /* CS high, SK low, DI low */
@@ -96,6 +98,7 @@ void eeprom_9056_cmd_start(volatile struct Pci9056LocalConf *pLC)
 				      | PLX9056_CNTRL_EECS);
 }
 
+static
 void eeprom_9056_cmd_stop(volatile struct Pci9056LocalConf *pLC)
 {
   /* CS low, SK low, DI low */
@@ -105,6 +108,7 @@ void eeprom_9056_cmd_stop(volatile struct Pci9056LocalConf *pLC)
 /* This function is not writting the optimal way - the typical EEPROM
    programming cycle takes 3 ms according to datasheet. This function
    will take 10 - 20 ms depeding on the kernel timer setup */
+static
 int eeprom_9056_wait(volatile struct Pci9056LocalConf *pLC)
 {
   int timeout_jiffies;
@@ -127,6 +131,7 @@ int eeprom_9056_wait(volatile struct Pci9056LocalConf *pLC)
   return 0;
 }
 
+static
 int eeprom_9056_write_bits(volatile struct Pci9056LocalConf *pLC,
 		       int command, int cmdlen)
 {
@@ -170,6 +175,7 @@ int eeprom_9056_write_bits(volatile struct Pci9056LocalConf *pLC,
   return 0;
 }
 
+static
 int eeprom_9056_read_bits(volatile struct Pci9056LocalConf *pLC,
 		      int *data, int readlen)
 {
@@ -209,6 +215,7 @@ int eeprom_9056_read_bits(volatile struct Pci9056LocalConf *pLC,
   return 0;
 }
 
+static
 int eeprom_9056_read(struct Pci9056LocalConf *pLC,
 		unsigned short *eepromdata, unsigned int wordcount)
 {
@@ -277,6 +284,7 @@ int eeprom_9056_sprint(struct Pci9056LocalConf *pLC, char *buf, int size)
     return -ENOSPC;
 }
 
+static
 int eeprom_9056_write(struct Pci9056LocalConf *pLC,
 		 unsigned short *eepromdata, unsigned int wordcount)
 {
