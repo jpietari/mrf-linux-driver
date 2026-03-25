@@ -25,6 +25,7 @@
 
 #include "pci_mrfev.h"
 
+static
 int spi_wait_tmt(struct mrf_dev *ev_dev)
 {
   volatile u32 *spi_control = ((ev_dev->pEv) + EV_SPI_CONTROL_OFFSET);
@@ -47,6 +48,7 @@ int spi_wait_tmt(struct mrf_dev *ev_dev)
   return 0;
 }
 
+static
 void spi_slave_select(struct mrf_dev *ev_dev, int select)
 {
   volatile u32 *spi_control = ((ev_dev->pEv) + EV_SPI_CONTROL_OFFSET);
@@ -85,6 +87,7 @@ void spi_slave_select(struct mrf_dev *ev_dev, int select)
     } 
 }
 
+static
 int spi_wait_trdy(struct mrf_dev *ev_dev)
 {
   volatile u32 *spi_control = ((ev_dev->pEv) + EV_SPI_CONTROL_OFFSET);
@@ -103,6 +106,7 @@ int spi_wait_trdy(struct mrf_dev *ev_dev)
   return 0;
 }
 
+static
 int spi_write(struct mrf_dev *ev_dev, int data)
 {
   volatile u32 *spi_data = ((ev_dev->pEv) + EV_SPI_DATA_OFFSET);
@@ -119,6 +123,7 @@ int spi_write(struct mrf_dev *ev_dev, int data)
   return (data & 0x00ff);
 }
 
+static
 int spi_wait_rrdy(struct mrf_dev *ev_dev)
 {
   volatile u32 *spi_control = ((ev_dev->pEv) + EV_SPI_CONTROL_OFFSET);
@@ -137,6 +142,7 @@ int spi_wait_rrdy(struct mrf_dev *ev_dev)
   return 0;
 }
 
+static
 int spi_read(struct mrf_dev *ev_dev)
 {
   volatile u32 *spi_data = ((ev_dev->pEv) + EV_SPI_DATA_OFFSET);
@@ -154,58 +160,7 @@ int spi_read(struct mrf_dev *ev_dev)
   return read_data;
 }
 
-int flash_readstart(struct mrf_dev *ev_dev)
-{
-  int retval;
-
-  spi_slave_select(ev_dev, 0);
-  spi_slave_select(ev_dev, 1);
-  retval = spi_write(ev_dev, M25P_FAST_READ);
-  if (retval < 0)
-    return retval;
-  /* Three address bytes */
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-  /* One dummy write + the first write that actually reads and starts
-     the transfer of the first real byte */
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-
-  return 0;
-}
-
-int flash_readbyte(struct mrf_dev *ev_dev)
-{
-  int retval, read_data;
-
-  /* Read byte shifted in by previous write operation */
-  read_data = spi_read(ev_dev);
-  if (read_data < 0)
-    return read_data;
-  /* Write to start next byte transfer */
-  retval = spi_write(ev_dev, 0);
-  if (retval < 0)
-    return retval;
-
-  return read_data;
-}
-
-void flash_readend(struct mrf_dev *ev_dev)
-{
-  spi_slave_select(ev_dev, 0);
-}
-
+static
 int flash_read_status(struct mrf_dev *ev_dev)
 {
   int retval;

@@ -167,6 +167,7 @@ irqreturn_t ev_interrupt(int irq, void *dev_id);
 #else
 irqreturn_t ev_interrupt(int irq, void *dev_id, struct pt_regs *regs);
 #endif
+int ev_assign_irq(struct mrf_dev *ev_device);
 
 #define EV_IOC_MAGIC 220
 #define EV_IOCRESET  _IO(EV_IOC_MAGIC, 0)
